@@ -7,6 +7,10 @@ app.use(cors())
 
 const port = 8080
 
+app.get('/', (req, res) => {
+    res.send('Welcome to Tiger Bank!');
+});
+
 app.post('/create', express.json(), (req, res) => {
     createNewAccount( req.body , (msg) => {
         res.json({ 'sts' : 'success', msg })
