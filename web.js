@@ -5,7 +5,7 @@ const { createNewAccount, deposit, withdraw, balance, transfer } = require('./db
 const app = express()
 app.use(cors())
 
-const port = 8080
+const port = 443
 
 app.get('/', (req, res) => {
     res.send('Welcome to Tiger Bank!');
