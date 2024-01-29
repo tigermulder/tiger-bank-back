@@ -5,7 +5,7 @@ const { createNewAccount, deposit, withdraw, balance, transfer } = require('./db
 const app = express()
 app.use(cors())
 
-const port = 80
+const port = 8080
 
 app.post('/create', express.json(), (req, res) => {
     createNewAccount( req.body , (msg) => {
