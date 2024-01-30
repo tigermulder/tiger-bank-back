@@ -1,10 +1,11 @@
 {
   "name": "banking-app-beanstalk",
   "version": "1.0.0",
+  "private" : true,
   "description": "this is sample project ",
   "main": "web.js",
   "scripts": {
-    "start": "nodemon web.js",
+    "start": "node web.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "park-hyun-sung",
