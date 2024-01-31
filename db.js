@@ -1,11 +1,12 @@
 const mysql = require('mysql');
+require('dotenv').config(); // .env 파일의 환경 변수를 로드
 
 const client = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'qkrgustjd12',
-    database: 'tiger_bank',
-    port: 3306,
+    host: process.env.DB_HOST || 'mydb1.cxiookc0y4k6.ap-northeast-2.rds.amazonaws.com',
+    user: process.env.DB_USER || 'insol',
+    password: process.env.DB_PASSWORD || 'qkrgustjd12',
+    database: process.env.DB_DATABASE || 'tiger_bank',
+    port: process.env.DB_PORT || 3306,
 });
 
 // MySQL 연결
