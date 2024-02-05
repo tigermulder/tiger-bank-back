@@ -19,30 +19,12 @@ client.connect(err => {
 });
 
 const createNewAccount = ({ acId, acNm, balance }, onCreate = undefined) => {
-    // 이미 존재하는 계좌번호인지 확인
-    client.query('select * from account where ac_id = ?', [acId], (err, res) => {
+    client.query('insert into account (ac_id, ac_name, balance) values (?, ?, ?)', [acId, acNm, balance], (err, res) => {
         if (err) {
             console.error('\n ❌ 고객 생성 중 문제 발생:', err);
-            if (onCreate) onCreate({ success: false, message: '❌ 고객 생성 중 문제 발생' });
         } else {
-            if (res.length > 0) {
-                // 이미 존재하는 계좌번호일 경우 알림
-                console.log('\n ❌ 이미 존재하는 계좌번호입니다. 다른 계좌번호를 선택해주세요.');
-                const errorMessage = '❌ 이미 존재하는 계좌번호입니다. 다른 계좌번호를 선택해주세요.';
-                if (onCreate) onCreate({ success: false, message: errorMessage });
-            } else {
-                // 존재하지 않는 계좌번호일 경우 새로운 계좌 생성
-                client.query('insert into account (ac_id, ac_name, balance) values (?, ?, ?)', [acId, acNm, balance], (err, res) => {
-                    if (err) {
-                        console.error('\n ❌ 고객 생성 중 문제 발생:', err);
-                        if (onCreate) onCreate({ success: false, message: '❌ 고객 생성 중 문제 발생' });
-                    } else {
-                        console.log('\n ✅ 새로운 고객 성공적으로 생성됨');
-                        const successMessage = '✅ 새로운 고객 성공적으로 생성됨';
-                        if (onCreate) onCreate({ success: true, message: successMessage });
-                    }
-                });
-            }
+            console.log('\n ✅ 새로운 고객 성공적으로 생성됨');
+            if (onCreate) onCreate('✅ 새로운 고객 성공적으로 생성됨');
         }
     });
 }
@@ -52,8 +34,8 @@ const withdraw = ({ acId, amount }, onWithdraw = undefined) => {
         if (err) {
             console.log('\n ❌ 출금 중 문제 발생');
         } else {
-            const balance = parseFloat(res[0].balance);
-            const newBalance = balance - amount;
+            const balance = parseFloat(res[0].balance).toLocaleString('en-US');
+            const newBalance = parseFloat(balance.replace(/,/g, '')) - amount;
             client.query('update account set balance = ? where ac_id = ?', [newBalance, acId], (err, res) => {
                 if (err) {
                     console.log('\n ❌ 출금 중 문제 발생');
@@ -65,13 +47,14 @@ const withdraw = ({ acId, amount }, onWithdraw = undefined) => {
         }
     });
 }
+
 const deposit = ({ acId, amount }, onDeposit = undefined) => {
     client.query('select balance from account where ac_id = ?', [acId], (err, res) => {
         if (err) {
             console.log('\n ❌ 입금 중 문제 발생');
         } else {
-            const balance = parseFloat(res[0].balance);
-            const newBalance = balance + amount;
+            const balance = parseFloat(res[0].balance).toLocaleString('en-US');
+            const newBalance = parseFloat(balance.replace(/,/g, '')) + amount;
             client.query('update account set balance = ? where ac_id = ?', [newBalance, acId], (err, res) => {
                 if (err) {
                     console.log('\n ❌ 입금 중 문제 발생');
@@ -92,24 +75,16 @@ const transfer = ( {srcId, destId, amount }, onTransfer = undefined) => {
     })
 }
 
-const balance = (acId, onBalance = undefined) => {
+const balance  = (acId, onBalance = undefined) => {
+    console.log(acId)
     client.query(`select balance from account where ac_id = ?`, [acId], (err, res) => {
         if (err) {
-            console.log(`\n ❌ 잔액 조회 중 문제 발생`);
+            console.log(`\n ❌ 잔액 조회 중 문제 발생`)
             console.log(err);
-            if (onBalance) onBalance({ success: false, message: '❌ 잔액 조회 중 문제 발생' });
         } else {
-            if (res.length === 0) {
-                // 존재하지 않는 계좌번호일 경우 알림
-                const errorMessage = '❌ 해당 계좌번호가 존재하지 않습니다.';
-                console.log('\n', errorMessage);
-                if (onBalance) onBalance({ success: false, message: errorMessage });
-            } else {
-                const balance = res[0].balance;  // 문자열로 변환하지 않음
-                const successMessage = `💸 계좌 잔액은 : ${balance} 원`;
-                console.log('\n', successMessage);
-                if (onBalance) onBalance({ success: true, message: successMessage, balance });
-            }
+            const balance = parseFloat(res[0].balance).toLocaleString('en-US');
+            console.log(`\n 💸 계좌 잔액은 : ${balance} 원`);
+            if (onBalance) onBalance(balance);
         }
     })
 }
