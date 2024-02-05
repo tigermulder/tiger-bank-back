@@ -46,13 +46,14 @@ const createNewAccount = ({ acId, acNm, balance }, onCreate = undefined) => {
         }
     });
 }
+
 const withdraw = ({ acId, amount }, onWithdraw = undefined) => {
     client.query('select balance from account where ac_id = ?', [acId], (err, res) => {
         if (err) {
             console.log('\n ❌ 출금 중 문제 발생');
         } else {
-            const balance = parseFloat(res[0].balance).toLocaleString('en-US');
-            const newBalance = parseFloat(balance.replace(/,/g, '')) - amount;
+            const balance = parseFloat(res[0].balance);
+            const newBalance = balance - amount;
             client.query('update account set balance = ? where ac_id = ?', [newBalance, acId], (err, res) => {
                 if (err) {
                     console.log('\n ❌ 출금 중 문제 발생');
@@ -64,14 +65,13 @@ const withdraw = ({ acId, amount }, onWithdraw = undefined) => {
         }
     });
 }
-
 const deposit = ({ acId, amount }, onDeposit = undefined) => {
     client.query('select balance from account where ac_id = ?', [acId], (err, res) => {
         if (err) {
             console.log('\n ❌ 입금 중 문제 발생');
         } else {
-            const balance = parseFloat(res[0].balance).toLocaleString('en-US');
-            const newBalance = parseFloat(balance.replace(/,/g, '')) + amount;
+            const balance = parseFloat(res[0].balance);
+            const newBalance = balance + amount;
             client.query('update account set balance = ? where ac_id = ?', [newBalance, acId], (err, res) => {
                 if (err) {
                     console.log('\n ❌ 입금 중 문제 발생');
