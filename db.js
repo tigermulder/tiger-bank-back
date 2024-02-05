@@ -46,7 +46,6 @@ const createNewAccount = ({ acId, acNm, balance }, onCreate = undefined) => {
         }
     });
 }
-
 const withdraw = ({ acId, amount }, onWithdraw = undefined) => {
     client.query('select balance from account where ac_id = ?', [acId], (err, res) => {
         if (err) {
@@ -106,7 +105,7 @@ const balance = (acId, onBalance = undefined) => {
                 console.log('\n', errorMessage);
                 if (onBalance) onBalance({ success: false, message: errorMessage });
             } else {
-                const balance = parseFloat(res[0].balance).toLocaleString('en-US');
+                const balance = res[0].balance;  // 문자열로 변환하지 않음
                 const successMessage = `💸 계좌 잔액은 : ${balance} 원`;
                 console.log('\n', successMessage);
                 if (onBalance) onBalance({ success: true, message: successMessage, balance });
