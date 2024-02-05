@@ -14,13 +14,14 @@ app.post('/create', express.json(), (req, res) => {
     createNewAccount(req.body, (msg) => {
         if (msg.includes('❌')) {
             // 실패한 경우
-            res.status(400).json({ 'sts': 'fail', msg });
+            res.status(400).json({ 'sts': 'fail', 'msg': msg });
         } else {
             // 성공한 경우
-            res.status(201).json({ 'sts': 'success', msg });
+            res.status(201).json({ 'sts': 'success', 'msg': msg });
         }
     });
 });
+
 
 app.put('/transfer', express.json(), (req, res) => {
     transfer(req.body, msg => {
