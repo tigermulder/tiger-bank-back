@@ -52,8 +52,8 @@ const withdraw = ({ acId, amount }, onWithdraw = undefined) => {
         if (err) {
             console.log('\n ❌ 출금 중 문제 발생');
         } else {
-            const balance = parseFloat(res[0].balance).toLocaleString('en-US');
-            const newBalance = parseFloat(balance.replace(/,/g, '')) - amount;
+            const balance = parseFloat(res[0].balance);
+            const newBalance = balance - amount;
             client.query('update account set balance = ? where ac_id = ?', [newBalance, acId], (err, res) => {
                 if (err) {
                     console.log('\n ❌ 출금 중 문제 발생');
@@ -65,14 +65,13 @@ const withdraw = ({ acId, amount }, onWithdraw = undefined) => {
         }
     });
 }
-
 const deposit = ({ acId, amount }, onDeposit = undefined) => {
     client.query('select balance from account where ac_id = ?', [acId], (err, res) => {
         if (err) {
             console.log('\n ❌ 입금 중 문제 발생');
         } else {
-            const balance = parseFloat(res[0].balance).toLocaleString('en-US');
-            const newBalance = parseFloat(balance.replace(/,/g, '')) + amount;
+            const balance = parseFloat(res[0].balance);
+            const newBalance = balance + amount;
             client.query('update account set balance = ? where ac_id = ?', [newBalance, acId], (err, res) => {
                 if (err) {
                     console.log('\n ❌ 입금 중 문제 발생');
@@ -106,7 +105,7 @@ const balance = (acId, onBalance = undefined) => {
                 console.log('\n', errorMessage);
                 if (onBalance) onBalance({ success: false, message: errorMessage });
             } else {
-                const balance = parseFloat(res[0].balance).toLocaleString('en-US');
+                const balance = res[0].balance;  // 문자열로 변환하지 않음
                 const successMessage = `💸 계좌 잔액은 : ${balance} 원`;
                 console.log('\n', successMessage);
                 if (onBalance) onBalance({ success: true, message: successMessage, balance });
